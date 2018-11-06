@@ -1,1 +1,1 @@
-# Application-of-Variational-Autoencoder-Models-on-Protein-Multiple-Sequence-Alignments
+# Protein Evolution with Variational Auto-Encoder (PEVAE)
