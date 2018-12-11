@@ -62,20 +62,20 @@ for name in head_node_names:
     for node in (t&name).traverse('preorder'):
         cluster_node_names[name].append(node.name)
 
-# fig = plt.figure(0)
-# fig.clf()
-# for i in range(len(head_node_names)):
-#     names = cluster_node_names[head_node_names[i]]
-#     idx = [ key2idx[n] for n in names]
-#     plt.plot(mu[idx,0], mu[idx,1], '.', markersize = 2, label = head_node_names[i])
-# # plt.xlim((-6.5,10))
-# # plt.ylim((-8,8))    
-# # plt.title("dist_cutoff: {:.2f}, num of cluster: {:}".format(dist_cutoff, len(head_node_names)))
-# # plt.legend(markerscale= 4, loc = 'upper left')
-# plt.xlabel(r'$Z_1$')
-# plt.ylabel(r'$Z_2$')
-# plt.tight_layout()
-# fig.savefig("./output/cluster.eps")
+fig = plt.figure(0)
+fig.clf()
+for i in range(len(head_node_names)):
+    names = cluster_node_names[head_node_names[i]]
+    idx = [ key2idx[n] for n in names]
+    plt.plot(mu[idx,0], mu[idx,1], '.', markersize = 2, label = head_node_names[i])
+# plt.xlim((-6.5,10))
+# plt.ylim((-8,8))    
+# plt.title("dist_cutoff: {:.2f}, num of cluster: {:}".format(dist_cutoff, len(head_node_names)))
+# plt.legend(markerscale= 4, loc = 'upper left')
+plt.xlabel(r'$Z_1$')
+plt.ylabel(r'$Z_2$')
+plt.tight_layout()
+fig.savefig("./output/cluster.eps")
 
 ## zoom in branches
 for branch in ['10854', '16528']:
@@ -94,20 +94,20 @@ for branch in ['10854', '16528']:
         for node in (t&name).traverse('preorder'):
             cluster_node_names[name].append(node.name)
 
-    # fig = plt.figure(1)
-    # fig.clf()
-    # for i in range(len(head_node_names)):
-    #     names = cluster_node_names[head_node_names[i]]
-    #     idx = [ key2idx[n] for n in names]
-    #     plt.plot(mu[idx,0], mu[idx,1], '.', markersize = 2, label = head_node_names[i])
-    # # plt.xlim((-6.5,10))
-    # # plt.ylim((-8,8))    
-    # # plt.title("dist_cutoff: {:.2f}, num of cluster: {:}".format(dist_cutoff, len(head_node_names)))
-    # # plt.legend(markerscale= 4, loc = 'upper right')
-    # plt.xlabel(r'$Z_1$')
-    # plt.ylabel(r'$Z_2$')
-    # plt.tight_layout()
-    # fig.savefig("./output/branch_{}_cluster.eps".format(branch))
+    fig = plt.figure(1)
+    fig.clf()
+    for i in range(len(head_node_names)):
+        names = cluster_node_names[head_node_names[i]]
+        idx = [ key2idx[n] for n in names]
+        plt.plot(mu[idx,0], mu[idx,1], '.', markersize = 2, label = head_node_names[i])
+    # plt.xlim((-6.5,10))
+    # plt.ylim((-8,8))    
+    # plt.title("dist_cutoff: {:.2f}, num of cluster: {:}".format(dist_cutoff, len(head_node_names)))
+    # plt.legend(markerscale= 4, loc = 'upper right')
+    plt.xlabel(r'$Z_1$')
+    plt.ylabel(r'$Z_2$')
+    plt.tight_layout()
+    fig.savefig("./output/branch_{}_cluster.eps".format(branch))
 
 
 #plt.show()

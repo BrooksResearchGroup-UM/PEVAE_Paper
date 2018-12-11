@@ -36,7 +36,7 @@ vae.cuda()
 
 weight_decay = 0.01
 optimizer = optim.Adam(vae.parameters(), weight_decay = 0.01)
-num_epoches = 1000
+num_epoches = 10000
 train_loss_epoch = []
 test_loss_epoch = []
 
