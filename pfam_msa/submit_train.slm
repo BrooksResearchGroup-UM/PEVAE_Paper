@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Created by Xinqiang Ding (xqding@umich.edu)
+# at 2018/12/11 05:37:26
+
+#SBATCH --job-name=VAE
+#SBATCH --time=3-00:00:00
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --exclude=gollum[003-045]
+
+python ./script/train.py --num_epoch 10000 --weight_decay 0.01
