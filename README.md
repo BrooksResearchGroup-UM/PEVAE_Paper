@@ -35,8 +35,11 @@ pytorch, numpy, ete3
 
    You can either run `python ./script/download_MSA.py --Pfam_id PF00041` or go to Pfam website to download the sequence alignment.
    
+2. Train a VAE model using the simulated multiple sequence alignment.
    Run `python ./script/proc_msa.py` to process the alignment
    
    Run `python ./script/train.py --num_epoch 10000 --weight_decay 0.01` to train a VAE model of the multiple sequence alignment.
+   
+3. Project sequences into the VAE latent space.
    
    Run `python ./script/analyze_model.py` to project sequences into latent space.
