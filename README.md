@@ -30,4 +30,13 @@ pytorch, numpy, ete3
 
    Run `python ./script/plot_R2.py` to plot the Pearson correlation coefficient calculated above.
 
+## Learn a VAE model on a multiple sequence alignment of a protein family from Pfam
+1. Download the multiple sequence alignment given a Pfam id
 
+   You can either run `python ./script/download_MSA.py --Pfam_id PF00041` or go to Pfam website to download the sequence alignment.
+   
+   Run `python ./script/proc_msa.py` to process the alignment
+   
+   Run `python ./script/train.py --num_epoch 10000 --weight_decay 0.01` to train a VAE model of the multiple sequence alignment.
+   
+   Run `python ./script/analyze_model.py` to project sequences into latent space.
