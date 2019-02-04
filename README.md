@@ -15,6 +15,9 @@ conda install pytorch torchvision -c pytorch
 conda install numpy
 conda install ete3
 ```
+Depending on your computer, installing Anaconda can take several minutes to an hour.
+It should take less than 20 minutes to install pytorch, numpy and ete3 once Anaconda is installed.
+
 
 ## Installation
 In order to run the following demo, the source code in this repository needs to be downloaded
@@ -29,8 +32,7 @@ The following is a step-by-step instruction to repreduce the results presented i
 It also serves as a demonstration on how to use the provide script on data of your interest.
 
 ### Learn a VAE model on a simulated multiple sequence alignment
-**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper`.
-
+**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper/simulated_msa/`.
 1. Simulate a multiple sequence alignment.  
    Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.  
    Run `python ./script/read_LG_matrix.py` to generate the LG amino acid substitute matrix `./output/LG_matrix.pkl`  
@@ -47,7 +49,12 @@ It also serves as a demonstration on how to use the provide script on data of yo
    Run `python ./script/calc_R2_ancestor.py` to calculate Pearson correlation coefficient between evolutionary time and positions of sequences in latent space.  
    Run `python ./script/plot_R2.py` to plot the Pearson correlation coefficient calculated above.
    
+4. Expected output.  
+   After running above commands, you shoud be able to get similar figures as the figure 2(E and F) and the figure 3 presented in the manuscript.
+   
+   
 ### Learn a VAE model on a multiple sequence alignment of a protein family from Pfam
+**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper/pfam_msa/`.
 1. Download the multiple sequence alignment given a Pfam id  
    You can either run `python ./script/download_MSA.py --Pfam_id PF00041` or go to Pfam website to download the sequence alignment.
    
@@ -57,3 +64,6 @@ It also serves as a demonstration on how to use the provide script on data of yo
    
 3. Project sequences into the VAE latent space.     
    Run `python ./script/analyze_model.py` to project sequences into latent space.
+
+4. Expected output.  
+   After running above commands, you shoud be able to get similar figures as the figure 2(A and B) and the figure 4(A and B) presented in the manuscript.
