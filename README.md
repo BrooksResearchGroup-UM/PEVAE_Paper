@@ -24,12 +24,13 @@ If the command runs successfully, you should be able to find a new dictory calle
 under the directory where you run the `git clone` command.
 You can find all the source code in the directory `PEVAE_Paper`.
 
+## Demo and Reproduction Instructions
+The following is a step-by-step instruction to repreduce the results presented in the manuscript.
+It also serves as a demonstration on how to use the provide script on data of your interest.
 
-## Learn a VAE model on a simulated multiple sequence alignment
-1. Simulate a multiple sequence alignment.
-
-   Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.
-
+### Learn a VAE model on a simulated multiple sequence alignment
+1. Simulate a multiple sequence alignment.  
+   Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.  
    Run `python ./script/read_LG_matrix.py` to generate the LG amino acid substitute matrix `./output/LG_matrix.pkl`
 
    Run `python ./script/simulate.py` to simulate a multiple sequence alignment `./output/simulated_msa.pkl` based on the phlogenetic tree and LG_matrix generated above.
@@ -52,7 +53,7 @@ You can find all the source code in the directory `PEVAE_Paper`.
 
    Run `python ./script/plot_R2.py` to plot the Pearson correlation coefficient calculated above.
 
-## Learn a VAE model on a multiple sequence alignment of a protein family from Pfam
+### Learn a VAE model on a multiple sequence alignment of a protein family from Pfam
 1. Download the multiple sequence alignment given a Pfam id
 
    You can either run `python ./script/download_MSA.py --Pfam_id PF00041` or go to Pfam website to download the sequence alignment.
