@@ -1,7 +1,29 @@
 # Protein Evolution with Variational Auto-Encoder (PEVAE)
 
-## Required Python packages
-pytorch, numpy, ete3
+## Requirements
+Operation System: Linux (CentOS release 6.9)  
+Programming language: Python 3.5  
+Python Package: PyTorch 1.0.0, Numpy 1.15, ete2 3.1.1
+
+**Note**: Although the souce code in this repository has only been tested on a Linux system,
+it is expected to be able to run on other operation systems (Windows or Mac)
+as long as both Python and required packages are installed. To install both Python and required
+Python packages, we highly recommend readers to first install Anaconda and then install required
+packages via `conda install`:  
+```
+conda install pytorch torchvision -c pytorch
+conda install numpy
+conda install ete3
+```
+
+## Installation
+In order to run the following demo, the source code in this repository needs to be downloaded
+onto your local computer. You can download all the source code via
+`git clone https://github.com/xqding/PEVAE_Paper.git`.
+If the command runs successfully, you should be able to find a new dictory called `PEVAE_Paper`
+under the directory where you run the `git clone` command.
+You can find all the source code in the directory `PEVAE_Paper`.
+
 
 ## Learn a VAE model on a simulated multiple sequence alignment
 1. Simulate a multiple sequence alignment.
