@@ -29,6 +29,8 @@ The following is a step-by-step instruction to repreduce the results presented i
 It also serves as a demonstration on how to use the provide script on data of your interest.
 
 ### Learn a VAE model on a simulated multiple sequence alignment
+**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper`.
+
 1. Simulate a multiple sequence alignment.  
    Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.  
    Run `python ./script/read_LG_matrix.py` to generate the LG amino acid substitute matrix `./output/LG_matrix.pkl`  
