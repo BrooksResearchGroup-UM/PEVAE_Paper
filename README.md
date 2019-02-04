@@ -3,7 +3,7 @@
 ## Requirements
 Operation System: Linux (CentOS release 6.9)  
 Programming language: Python 3.5  
-Python Package: PyTorch 1.0.0, Numpy 1.15, ete2 3.1.1
+Python Package: PyTorch 1.0.0, Numpy 1.15, ete2 3.1.1  
 
 **Note**: Although the souce code in this repository has only been tested on a Linux system,
 it is expected to be able to run on other operation systems (Windows or Mac)
@@ -32,7 +32,8 @@ The following is a step-by-step instruction to repreduce the results presented i
 It also serves as a demonstration on how to use the provide script on data of your interest.
 
 ### Learn a VAE model on a simulated multiple sequence alignment
-**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper/simulated_msa/`.
+#### Steps to run in order
+**Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper/simulated_msa/`.  
 1. Simulate a multiple sequence alignment.  
    Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.  
    Run `python ./script/read_LG_matrix.py` to generate the LG amino acid substitute matrix `./output/LG_matrix.pkl`  
@@ -49,11 +50,15 @@ It also serves as a demonstration on how to use the provide script on data of yo
    Run `python ./script/calc_R2_ancestor.py` to calculate Pearson correlation coefficient between evolutionary time and positions of sequences in latent space.  
    Run `python ./script/plot_R2.py` to plot the Pearson correlation coefficient calculated above.
    
-4. Expected output.  
+#### Expected output
    After running above commands, you shoud be able to get similar figures as the figure 2(E and F) and the figure 3 presented in the manuscript.
+   
+#### Running time
+   The most time consuming step is step 2 which train a VAE model. It takes about an hour to finish if it is run on a graphical process unit (GPU). It can take several hour to finish it runs on a central processing units (CPUs). Step 1 and 3 only takes minutes.
    
    
 ### Learn a VAE model on a multiple sequence alignment of a protein family from Pfam
+#### Steps to run in order
 **Note**: Becuase running the following command, please change your working direcotry to the directory `PEVAE_Paper/pfam_msa/`.
 1. Download the multiple sequence alignment given a Pfam id  
    You can either run `python ./script/download_MSA.py --Pfam_id PF00041` or go to Pfam website to download the sequence alignment.
@@ -65,5 +70,9 @@ It also serves as a demonstration on how to use the provide script on data of yo
 3. Project sequences into the VAE latent space.     
    Run `python ./script/analyze_model.py` to project sequences into latent space.
 
-4. Expected output.  
+#### Expected output
    After running above commands, you shoud be able to get similar figures as the figure 2(A and B) and the figure 4(A and B) presented in the manuscript.
+   
+#### Running time
+   The most time consuming step is step 2 which train a VAE model. It takes about an hour to finish if it is run on a graphical process unit (GPU). It can take several hour to finish it runs on a central processing units (CPUs). Step 1 and 3 only takes minutes.
+   
