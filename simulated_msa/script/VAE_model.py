@@ -2,15 +2,12 @@ __author__ = "Xinqiang Ding <xqding@umich.edu>"
 __date__ = "2017/10/16 02:50:08"
 
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import pickle
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
+from torch.utils.data import Dataset
 
 class MSA_Dataset(Dataset):
     def __init__(self, seq_msa_binary, seq_weight, seq_keys):
@@ -18,10 +15,12 @@ class MSA_Dataset(Dataset):
         self.seq_msa_binary = seq_msa_binary
         self.seq_weight = seq_weight
         self.seq_keys = seq_keys
+        
     def __len__(self):
         assert(self.seq_msa_binary.shape[0] == len(self.seq_weight))
         assert(self.seq_msa_binary.shape[0] == len(self.seq_keys))        
         return self.seq_msa_binary.shape[0]
+    
     def __getitem__(self, idx):
         return self.seq_msa_binary[idx, :], self.seq_weight[idx], self.seq_keys[idx]
 

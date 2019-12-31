@@ -1,10 +1,12 @@
+"""
+Train a latent space model using leaf node sequences using VAEs
+
+"""
+
 import numpy as np
-import matplotlib as mpl
-mpl.use('Agg')
 import matplotlib.pyplot as plt
 import pickle
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
@@ -13,7 +15,7 @@ from sys import exit
 import sys
 from VAE_model import *
 
-## read data
+## read multiple sequence alignment in binary representation
 with open("./output/msa_leaf_binary.pkl", 'rb') as file_handle:
     msa_binary = pickle.load(file_handle)    
 num_seq = msa_binary.shape[0]
@@ -24,7 +26,7 @@ msa_binary = msa_binary.astype(np.float32)
 
 with open("./output/msa_leaf_keys.pkl", 'rb') as file_handle:
     msa_keys = pickle.load(file_handle)    
-
+    
 msa_weight = np.ones(num_seq) / num_seq
 msa_weight = msa_weight.astype(np.float32)
 

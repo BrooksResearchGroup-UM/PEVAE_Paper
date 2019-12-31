@@ -8,14 +8,17 @@ import pickle
 import random
 from sys import exit
 
+## set the random seed so that the simulate is reproducible
+## you can delete the following two lines of command if
+## you want to use different random seeds in different runs
 random.seed(0)
 nrand.seed(0)
 
-## read phylogentic tree
+## read the random phylogentic tree
 t = Tree("./output/random_tree.newick", format = 1)
 t.name = str(len(t))
 
-## read LG model
+## read LG replacement matrix
 with open("./output/LG_matrix.pkl", 'rb') as file_handle:
     LG_matrix = pickle.load(file_handle)
 R_dict = LG_matrix['R_dict']
@@ -29,13 +32,18 @@ aa2idx = {}
 for i in range(len(amino_acids)):
     aa2idx[amino_acids[i]] = i
     
-## sample sequence for root node from PI
+## sample sequence for the root node from the equilibrium
+## distribution of amino acids
 len_protein = 100
-root_seq = nrand.choice(amino_acids, size = len_protein, replace = True,
+root_seq = nrand.choice(amino_acids,
+                        size = len_protein,
+                        replace = True,
                         p = PI.reshape(-1) / np.sum(PI))
 t.add_feature('seq', root_seq)
 
 ## simulate sequences for each node
+## the evolution process is modelled as a continous-time Markov chain.
+## the following script is used for simulating the continous-time Markov chain.
 for node in t.traverse('preorder'):    
     if node.is_root():
         continue    
@@ -62,12 +70,10 @@ for node in t.traverse('preorder'):
         dist -= wait_time        
     node.add_feature('seq', seq)    
 
-## save the tree
-t.write(outfile = "./output/named_tree.newick", format = 1)
-#t.write(features = ['name', 'dist'], outfile = "./output/named_tree.newick")
-
-## save multiple sequence alignment
+#### save the simulated sequences
 simulated_msa = {}
+
+## save the simulated sequences in a text file
 with open("./output/simulated_msa.txt", 'w') as file_handle:
     for node in t.traverse('preorder'):
         print("> {:<10}".format(node.name), end = "", file = file_handle)
@@ -75,6 +81,7 @@ with open("./output/simulated_msa.txt", 'w') as file_handle:
         print(seq, end = "", file = file_handle)
         print("", file = file_handle)
         simulated_msa[node.name] = seq
-        
+
+## save the simulated sequences in a pickle file
 with open("./output/simulated_msa.pkl", 'wb') as file_handle:
     pickle.dump(simulated_msa, file = file_handle)

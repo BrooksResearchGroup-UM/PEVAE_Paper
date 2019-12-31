@@ -37,7 +37,7 @@ It also serves as a demonstration on how to use the provide script on data of yo
 1. Simulate a multiple sequence alignment.  
    Run `python ./script/gene_random_tree.py` to generate a random phylogenetic tree `./output/random_tree.newick`.  
    Run `python ./script/read_LG_matrix.py` to generate the LG amino acid substitute matrix `./output/LG_matrix.pkl`  
-   Run `python ./script/simulate.py` to simulate a multiple sequence alignment `./output/simulated_msa.pkl` based on the phlogenetic tree and LG_matrix generated above.
+   Run `python ./script/simulate_msa.py` to simulate a multiple sequence alignment `./output/simulated_msa.pkl` based on the phlogenetic tree and LG_matrix generated above.
 
 2. Train a VAE model using the simulated multiple sequence alignment.  
    Run `python ./script/proc_msa.py` to process the multiple sequence alignment into a binary matrix `./output/msa_binary.pkl`.  
