@@ -118,6 +118,13 @@ class VAE(nn.Module):
         return elbo
 
     def compute_elbo_with_multiple_samples(self, x, num_samples):
+        '''
+        Evidence lower bound is an lower bound of log P(x). Although it is a lower
+        bound, we can use elbo to approximate log P(x).
+        Using multiple samples to calculate the elbo makes it be a better approximation
+        of log P(x).
+        '''
+        
         with torch.no_grad():
             x = x.expand(num_samples, x.shape[0], x.shape[1])
             mu, sigma = self.encoder(x)
