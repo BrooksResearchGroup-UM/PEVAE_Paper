@@ -97,11 +97,7 @@ class VAE(nn.Module):
         h = torch.reshape(h, fixed_shape + (-1, self.num_aa_type))        
         log_p = F.log_softmax(h, dim = -1)
         log_p = torch.reshape(log_p, fixed_shape + (-1,))
-        
-        # h = h.view(h.size(0), -1, self.num_aa_type)
-        # log_p = F.log_softmax(h, dim = 2)
-        # log_p = log_p.view(log_p.size(0), -1)
-        
+                
         return log_p
 
     def compute_weighted_elbo(self, x, weight):
@@ -143,19 +139,3 @@ class VAE(nn.Module):
             elbo = torch.log(torch.mean(weight, 0)) + log_weight_max
             return elbo        
     
-    # def sample_latent_var(self, mu, sigma):
-    #     eps = torch.ones_like(sigma).normal_()
-    #     z = mu + sigma * eps
-    #     return z
-    
-    # def forward(self, x):
-    #     mu, sigma = self.encoder(x)
-    #     z = self.sample_latent_var(mu, sigma)
-    #     p = self.decoder(z)        
-    #     return mu, sigma, p
-
-    
-# def loss_function(msa, weight, mu, sigma, p):    
-#     cross_entropy = -torch.sum(torch.sum(msa*p, dim = 1) * weight)    
-#     KLD = - 0.5 * torch.sum(torch.sum((1.0 + torch.log(sigma**2) - mu**2 - sigma**2), dim = 1) * weight)
-#     return cross_entropy + KLD
