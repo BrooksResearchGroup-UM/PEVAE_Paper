@@ -4,9 +4,10 @@
 # at 2018/12/11 05:37:26
 
 #SBATCH --job-name=VAE
-#SBATCH --time=3-00:00:00
+#SBATCH --time=10:00:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --exclude=gollum[003-045]
+#SBATCH --exclude=gollum[003-045,053]
+#SBATCH --mem=60G
 
 python ./script/train.py --num_epoch 10000 --weight_decay 0.01

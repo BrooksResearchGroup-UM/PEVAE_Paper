@@ -1,3 +1,17 @@
+#!/home/xqding/apps/miniconda3/bin/python
+
+# Created by Xinqiang Ding (xqding@umich.edu)
+# at 2020/01/05 20:51:53
+
+#SBATCH --job-name=VAE
+#SBATCH --time=10:00:00
+#SBATCH --partition=gpu
+#SBATCH --exclude=gollum[003-045]
+#SBATCH --cpus-per-task=4
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+
+
 import numpy as np
 import matplotlib as mpl
 mpl.use('Agg')
@@ -9,7 +23,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
-from model import *
+import sys
+sys.path.append("/home/xqding/course/projectsOnGitHub/PEVAE_Paper")
+from VAE_model import *
 from sys import exit
 import argparse
 
@@ -37,42 +53,40 @@ with open("./output/seq_weight.pkl", 'rb') as file_handle:
     seq_weight = pickle.load(file_handle)
 seq_weight = seq_weight.astype(np.float32)
 
-batch_size = num_seq
-train_data = MSA_Dataset(seq_msa_binary, seq_weight)
-train_data_loader = DataLoader(train_data, batch_size = batch_size, shuffle = True)
-vae = VAE(2, len_protein * num_res_type, 100)
+with open("./output/keys_list.pkl", 'rb') as file_handle:
+    seq_keys = pickle.load(file_handle)
+
+vae = VAE(21, 2, len_protein * num_res_type, [100])
 vae.cuda()
 
-optimizer = optim.Adam(vae.parameters(), weight_decay = weight_decay)
+optimizer = optim.Adam(vae.parameters(),
+                       weight_decay = weight_decay)
 train_loss_epoch = []
 test_loss_epoch = []
 
-for epoch in range(num_epoches):
-    running_loss = []    
-    for idx, data in enumerate(train_data_loader):
-        msa, weight = data
-        msa = Variable(msa).cuda()
-        weight = Variable(weight).cuda()
-        
-        optimizer.zero_grad()
-        
-        mu, sigma, p = vae.forward(msa)
-        
-        loss = loss_function(msa, weight, mu, sigma, p)
-        loss.backward()
-        optimizer.step()    
-        print("Epoch: {:>4}, Step: {:>4}, loss: {:>4.2f}".format(epoch, idx, loss.item()))
-        running_loss.append(loss.item())        
-    train_loss_epoch.append(np.mean(running_loss))
-        
+msa = torch.from_numpy(seq_msa_binary)
+msa = msa.cuda()
+weight =  torch.from_numpy(seq_weight)
+weight = weight.cuda()
+
+loss_list = []
+for epoch in range(num_epoches):    
+    loss = (-1)*vae.compute_weighted_elbo(msa, weight)
+    optimizer.zero_grad()
+    loss.backward()        
+    optimizer.step()
+
+    loss_list.append(loss.item())
+    print("Epoch: {:>4}, loss: {:>4.2f}".format(epoch, loss.item()), flush = True)
+    
 torch.save(vae.state_dict(), "./output/model/vae_{}.model".format(str(weight_decay)))
 
 with open('./output/loss/loss_{}.pkl'.format(str(weight_decay)), 'wb') as file_handle:
-    pickle.dump({'train_loss_epoch': train_loss_epoch}, file_handle)
+    pickle.dump({'loss_list': loss_list}, file_handle)
 
 fig = plt.figure(0)
 fig.clf()
-plt.plot(train_loss_epoch, label = "train", color = 'r')
+plt.plot(loss_list, label = "train", color = 'r')
 #plt.plot(test_loss_epoch, label = "test", color = 'b')
 #plt.ylim((140, 180))
 plt.xlabel('epoch')

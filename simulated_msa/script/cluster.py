@@ -21,14 +21,13 @@ with open("./output/latent_space.pkl", 'rb') as file_handle:
 key = data['key']
 mu = data['mu']
 sigma = data['sigma']
-p = data['p']
 
 key2idx = {}
 for i in range(len(key)):
     key2idx[key[i]] = i
 
 ## read tree
-t = Tree("./output/named_tree.newick", format = 1)
+t = Tree("./output/random_tree.newick", format = 1)
 num_leaf = len(t)
 t.name = str(num_leaf)
 leaf_idx = []

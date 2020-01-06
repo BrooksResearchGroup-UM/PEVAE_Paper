@@ -94,9 +94,12 @@ class VAE(nn.Module):
 
         fixed_shape = tuple(h.shape[0:-1])
         h = torch.unsqueeze(h, -1)
-        h = torch.reshape(h, fixed_shape + (-1, self.num_aa_type))        
+        h = h.view(fixed_shape + (-1, self.num_aa_type))
+        
+        #h = torch.reshape(h, fixed_shape + (-1, self.num_aa_type))        
         log_p = F.log_softmax(h, dim = -1)
-        log_p = torch.reshape(log_p, fixed_shape + (-1,))
+        log_p = log_p.view(fixed_shape + (-1,))
+        #log_p = torch.reshape(log_p, fixed_shape + (-1,))
         
         # h = h.view(h.size(0), -1, self.num_aa_type)
         # log_p = F.log_softmax(h, dim = 2)

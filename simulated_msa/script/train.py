@@ -1,6 +1,5 @@
 """
 Train a latent space model using leaf node sequences using VAEs
-
 """
 
 import numpy as np
@@ -24,16 +23,32 @@ num_res_type = msa_binary.shape[2]
 msa_binary = msa_binary.reshape((num_seq, -1))
 msa_binary = msa_binary.astype(np.float32)
 
+## each sequence has a label
 with open("./output/msa_leaf_keys.pkl", 'rb') as file_handle:
     msa_keys = pickle.load(file_handle)    
-    
+
+## sequences in msa are weighted. Here sequences are assigned
+## the same weights
 msa_weight = np.ones(num_seq) / num_seq
 msa_weight = msa_weight.astype(np.float32)
 
+#### construct the MSA dataseta and DataLoader
+## the model is trained with batches of data.
+## here we choose the batch size to be equal to the total number
+## of sequences because the GPU usually has large enough memory
+## for it. If you are running the code on a GPU with small memory and
+## have GPU memory error, try to decrease the batch_size
 batch_size = num_seq
 train_data = MSA_Dataset(msa_binary, msa_weight, msa_keys)
 train_data_loader = DataLoader(train_data, batch_size = batch_size, shuffle = True)
-vae = VAE(20, 2, len_protein * num_res_type, 100)
+
+## here we use only one hidden layer with 100 neurons. If you want to use more
+## hidden layers, change the parameter num_hidden_units. For instance, changing
+## it to [100, 150] will use two hidden layers with 100 and 150 neurons.
+vae = VAE(num_aa_type = 20,
+          dim_latent_vars = 2,
+          dim_msa_vars = len_protein*num_res_type,
+          num_hidden_units = [100])
 vae.cuda()
 
 weight_decay = 0.01
@@ -46,20 +61,18 @@ for epoch in range(num_epoches):
     running_loss = []    
     for idx, data in enumerate(train_data_loader):
         msa, weight, _ = data
-        msa = Variable(msa).cuda()
-        weight = Variable(weight).cuda()
-        
+        msa = msa.cuda()
+        weight = weight.cuda()
+
+        loss = (-1)*vae.compute_elbo_with_weight(msa, weight)
         optimizer.zero_grad()
+        loss.backward()        
+        optimizer.step()
         
-        mu, sigma, p = vae.forward(msa)
-        
-        loss = loss_function(msa, weight, mu, sigma, p)
-        loss.backward()
-        optimizer.step()    
         print("Epoch: {:>4}, Step: {:>4}, loss: {:>4.2f}".format(epoch, idx, loss.data.item()), flush = True)
         running_loss.append(loss.data.item())        
     train_loss_epoch.append(np.mean(running_loss))
-        
+
 torch.save(vae.state_dict(), "./output/vae_{:.2f}.model".format(weight_decay))
 
 with open('./output/loss.pkl', 'wb') as file_handle:

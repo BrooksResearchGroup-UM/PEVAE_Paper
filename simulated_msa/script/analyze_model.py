@@ -12,6 +12,7 @@ import torch
 import pandas
 import sys
 from VAE_model import *
+from torch.utils.data import Dataset, DataLoader
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 from sys import exit
@@ -35,25 +36,29 @@ msa_weight = msa_weight.astype(np.float32)
 batch_size = num_seq
 train_data = MSA_Dataset(msa_binary, msa_weight, msa_keys)
 train_data_loader = DataLoader(train_data, batch_size = batch_size)
-vae = VAE(20, 2, len_protein * num_res_type, 100)
+vae = VAE(20, 2, len_protein * num_res_type, [100])
 vae.cuda()
 vae.load_state_dict(torch.load("./output/vae_0.01.model"))
 
+mu_list = []
+sigma_list = []
 for idx, data in enumerate(train_data_loader):
     msa, weight, key = data
     with torch.no_grad():
-        msa = Variable(msa).cuda()
-        mu, sigma, p = vae.forward(msa)
+        msa = msa.cuda()        
+        mu, sigma = vae.encoder(msa)
+        mu_list.append(mu.cpu().data.numpy())
+        sigma_list.append(sigma.cpu().data.numpy())
 
-mu = mu.cpu().data.numpy()
-sigma = sigma.cpu().data.numpy()
-p = p.cpu().data.numpy()
+mu = np.vstack(mu_list)
+sigma = np.vstack(sigma_list)
 
 with open("./output/latent_space.pkl", 'wb') as file_handle:
-    pickle.dump({'key': key, 'mu': mu, 'sigma': sigma, 'p': p}, file_handle)    
+    pickle.dump({'key': key, 'mu': mu, 'sigma': sigma}, file_handle)    
 
+    
 ## plot latent space    
-t = Tree("./output/named_tree.newick", format = 1)
+t = Tree("./output/random_tree.newick", format = 1)
 num_leaf = len(t)
 t.name = str(num_leaf)
 
@@ -97,5 +102,3 @@ plt.ylabel("$Z_2$")
 plt.legend(markerscale = 3)
 plt.tight_layout()
 plt.savefig("./output/latent_mu_all.pdf")
-
-    
