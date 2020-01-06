@@ -24,7 +24,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
 import sys
-sys.path.append("/home/xqding/course/projectsOnGitHub/PEVAE_Paper")
+sys.path.append("/home/xqding/course/projectsOnGitHub/PEVAE_Paper/pfam_msa/script")
 from VAE_model import *
 from sys import exit
 import argparse
