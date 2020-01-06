@@ -42,6 +42,7 @@ It also serves as a demonstration on how to use the provide script on data of yo
 2. Train a VAE model using the simulated multiple sequence alignment.  
    Run `python ./script/proc_msa.py` to process the multiple sequence alignment into a binary matrix `./output/msa_binary.pkl`.  
    Run `python ./script/train.py` to train a VAE model using the binary representation of the multiple sequence alignment.
+   Run `python ./script/compute_elbo.py` to compute the elbo (approximation of \log p(x)) of training sequence. This script can be used for cross validation.   
 
 3. Project sequences into the VAE latent space.   
    Run `python ./script/analyze_model.py` to calculate the latent space coordinates of all the sequences in the multiple sequence alignment.  
