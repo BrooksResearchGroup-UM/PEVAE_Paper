@@ -56,42 +56,104 @@ seq_weight = seq_weight.astype(np.float32)
 with open("./output/keys_list.pkl", 'rb') as file_handle:
     seq_keys = pickle.load(file_handle)
 
-vae = VAE(21, 2, len_protein * num_res_type, [100])
-vae.cuda()
+#### training model with K-fold cross validation
+## split the data index 0:num_seq-1 into K sets
+## each set is just a set of indices of sequences.
+## in the kth traing, the kth subsets of sequences are used
+## as validation data and the remaining K-1 sets are used
+## as training data
+K = 5
+num_seq_subset = num_seq // K + 1
+idx_subset = []
+random_idx = np.random.permutation(range(num_seq))
+for i in range(K):
+    idx_subset.append(random_idx[i*num_seq_subset:(i+1)*num_seq_subset])
 
-optimizer = optim.Adam(vae.parameters(),
-                       weight_decay = weight_decay)
-train_loss_epoch = []
-test_loss_epoch = []
+## the following list holds the elbo values on validation data    
+elbo_all_list = []
 
-msa = torch.from_numpy(seq_msa_binary)
-msa = msa.cuda()
-weight =  torch.from_numpy(seq_weight)
-weight = weight.cuda()
-
-loss_list = []
-for epoch in range(num_epoches):    
-    loss = (-1)*vae.compute_weighted_elbo(msa, weight)
-    optimizer.zero_grad()
-    loss.backward()        
-    optimizer.step()
-
-    loss_list.append(loss.item())
-    print("Epoch: {:>4}, loss: {:>4.2f}".format(epoch, loss.item()), flush = True)
+for k in range(K):
+    print("Start the {}th fold training".format(k))
+    print("-"*60)
     
-torch.save(vae.state_dict(), "./output/model/vae_{}.model".format(str(weight_decay)))
+    ## build a VAE model with random parameters
+    vae = VAE(21, 2, len_protein * num_res_type, [100])
 
-with open('./output/loss/loss_{}.pkl'.format(str(weight_decay)), 'wb') as file_handle:
-    pickle.dump({'loss_list': loss_list}, file_handle)
+    ## move the VAE onto a GPU
+    vae.cuda()
 
-fig = plt.figure(0)
-fig.clf()
-plt.plot(loss_list, label = "train", color = 'r')
-#plt.plot(test_loss_epoch, label = "test", color = 'b')
-#plt.ylim((140, 180))
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.legend()
-plt.title("Loss")
-fig.savefig("./output/loss/loss_{}.png".format(str(weight_decay)))
-#plt.show()
+    ## build the Adam optimizer
+    optimizer = optim.Adam(vae.parameters(),
+                           weight_decay = weight_decay)
+
+    ## collect training and valiation data indices
+    validation_idx = idx_subset[k]
+    validation_idx.sort()
+    
+    train_idx = np.array(list(set(range(num_seq)) - set(validation_idx)))
+    train_idx.sort()
+
+    train_msa = torch.from_numpy(seq_msa_binary[train_idx, ])
+    train_msa = train_msa.cuda()
+
+    train_weight = torch.from_numpy(seq_weight[train_idx])
+    train_weight = train_weight/torch.sum(train_weight)
+    train_weight = train_weight.cuda()
+    
+    train_loss_list = []    
+    for epoch in range(num_epoches):    
+        loss = (-1)*vae.compute_weighted_elbo(train_msa, train_weight)
+        optimizer.zero_grad()
+        loss.backward()        
+        optimizer.step()
+
+        train_loss_list.append(loss.item())
+        if (epoch + 1) % 50 ==0:
+            print("Fold: {}, Epoch: {:>4}, loss: {:>4.2f}".format(k, epoch, loss.item()), flush = True)
+
+    ## cope trained model to cpu and save it
+    vae.cpu()
+    torch.save(vae.state_dict(), "./output/model/vae_{}_fold_{}.model".format(str(weight_decay), k))
+
+    print("Finish the {}th fold training".format(k))
+    print("="*60)
+    print('')
+    
+    print("Start the {}th fold validation".format(k))
+    print("-"*60)
+    ## evaluate the trained model 
+    vae.cuda()
+    
+    elbo_on_validation_data_list = []
+    ## because the function vae.compute_elbo_with_multiple samples uses
+    ## a large amount of memory on GPUs. we have to split validation data
+    ## into batches.
+    batch_size = 128
+    num_batches = len(validation_idx)//batch_size + 1
+    for idx_batch in range(num_batches):
+        if (idx_batch + 1) % 50 == 0:
+            print("idx_batch: {} out of {}".format(idx_batch, num_batches))        
+        validation_msa = seq_msa_binary[validation_idx[idx_batch*batch_size:(idx_batch+1)*batch_size]]
+        validation_msa = torch.from_numpy(validation_msa)
+        with torch.no_grad():
+            validation_msa = validation_msa.cuda()
+            elbo = vae.compute_elbo_with_multiple_samples(validation_msa, 5000)            
+            elbo_on_validation_data_list.append(elbo.cpu().data.numpy())
+
+    elbo_on_validation_data = np.concatenate(elbo_on_validation_data_list)    
+    elbo_all_list.append(elbo_on_validation_data)
+    
+    print("Finish the {}th fold validation".format(k))
+    print("="*60)
+    
+elbo_all = np.concatenate(elbo_all_list)
+elbo_mean = np.mean(elbo_all)
+## the mean_elbo can approximate the quanlity of the learned model
+## we want a model that has high mean_elbo
+print("mean_elbo: {:.3f}".format(elbo_mean))
+
+with open("./output/elbo_all.pkl", 'wb') as file_handle:
+    pickle.dump(elbo_all, file_handle)
+
+    
+exit()
