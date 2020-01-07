@@ -150,10 +150,17 @@ elbo_all = np.concatenate(elbo_all_list)
 elbo_mean = np.mean(elbo_all)
 ## the mean_elbo can approximate the quanlity of the learned model
 ## we want a model that has high mean_elbo
+## different weight decay factor or different network structure
+## will give different mean_elbo values and we want to choose the
+## weight decay factor or network structure that has large mean_elbo
 print("mean_elbo: {:.3f}".format(elbo_mean))
 
 with open("./output/elbo_all.pkl", 'wb') as file_handle:
     pickle.dump(elbo_all, file_handle)
+
+## after choosing the weight decay and network structure that have
+## large mean_elbo, we can fix them and train a new model with all
+## the training data as before
 
     
 exit()
