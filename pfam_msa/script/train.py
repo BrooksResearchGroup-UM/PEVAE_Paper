@@ -128,7 +128,7 @@ for k in range(K):
     ## because the function vae.compute_elbo_with_multiple samples uses
     ## a large amount of memory on GPUs. we have to split validation data
     ## into batches.
-    batch_size = 128
+    batch_size = 32
     num_batches = len(validation_idx)//batch_size + 1
     for idx_batch in range(num_batches):
         if (idx_batch + 1) % 50 == 0:
@@ -145,6 +145,8 @@ for k in range(K):
     
     print("Finish the {}th fold validation".format(k))
     print("="*60)
+
+    torch.cuda.empty_cache()
     
 elbo_all = np.concatenate(elbo_all_list)
 elbo_mean = np.mean(elbo_all)

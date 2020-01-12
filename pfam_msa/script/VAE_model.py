@@ -83,7 +83,7 @@ class VAE(nn.Module):
 
     def decoder(self, z):
         '''
-        decoder transforms latent space z into p, which is the probability  of x being 1.
+        decoder transforms latent space z into p, which is the log probability  of x being 1.
         '''
         
         h = z
