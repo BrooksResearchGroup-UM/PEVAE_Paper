@@ -24,6 +24,7 @@ vae.load_state_dict(model_state_dict)
 num_seqs = 5
 dim_latent_space = 2
 z = torch.randn(num_seqs, dim_latent_space)
+## z has to be a torch.tensor with a size of (num_seqs, dim_latent_space)
 with torch.no_grad():
     log_p = vae.decoder(z)
     p = torch.exp(log_p)
