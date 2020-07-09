@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 import torch
 import pandas
-from model import *
+from VAE_model import *
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 from sys import exit
