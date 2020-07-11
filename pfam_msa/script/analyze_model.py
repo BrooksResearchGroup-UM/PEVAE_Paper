@@ -28,6 +28,7 @@ seq_msa_binary = seq_msa_binary.astype(np.float32)
 with open("./output/seq_weight.pkl", 'rb') as file_handle:
     seq_weight = pickle.load(file_handle)
 seq_weight = seq_weight.astype(np.float32)
+seq_keys = np.arange(seq_msa_binary.shape[0])
 
 batch_size = num_seq
 train_data = MSA_Dataset(seq_msa_binary, seq_weight)
@@ -37,7 +38,7 @@ vae.cuda()
 vae.load_state_dict(torch.load("./output/model/vae_0.01.model"))
 
 for idx, data in enumerate(train_data_loader):
-    msa, weight = data
+    msa, weight, _ = data
     with torch.no_grad():
         msa = Variable(msa).cuda()    
         mu, sigma, p = vae.forward(msa)
