@@ -146,16 +146,16 @@ class VAE(nn.Module):
             elbo = torch.log(torch.mean(weight, 0)) + log_weight_max
             return elbo        
     
-    # def sample_latent_var(self, mu, sigma):
-    #     eps = torch.ones_like(sigma).normal_()
-    #     z = mu + sigma * eps
-    #     return z
+    def sample_latent_var(self, mu, sigma):
+        eps = torch.ones_like(sigma).normal_()
+        z = mu + sigma * eps
+        return z
     
-    # def forward(self, x):
-    #     mu, sigma = self.encoder(x)
-    #     z = self.sample_latent_var(mu, sigma)
-    #     p = self.decoder(z)        
-    #     return mu, sigma, p
+    def forward(self, x):
+        mu, sigma = self.encoder(x)
+        z = self.sample_latent_var(mu, sigma)
+        p = self.decoder(z)        
+        return mu, sigma, p
 
     
 # def loss_function(msa, weight, mu, sigma, p):    
