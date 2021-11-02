@@ -12,6 +12,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
 from sys import exit
 import sys
+sys.path.append("./script/")
 from VAE_model import *
 
 ## read multiple sequence alignment in binary representation
