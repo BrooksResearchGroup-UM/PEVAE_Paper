@@ -64,7 +64,7 @@ for epoch in range(num_epoches):
         msa = msa.cuda()
         weight = weight.cuda()
 
-        loss = (-1)*vae.compute_elbo_with_weight(msa, weight)
+        loss = (-1)*vae.compute_weighted_elbo(msa, weight)
         optimizer.zero_grad()
         loss.backward()        
         optimizer.step()
